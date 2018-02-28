@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" form-inline="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" form-inline="ie=edge">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/i18n/datepicker-ko.js"></script>
+    <link rel="stylesheet" href="https://necolas.github.io/normalize.css/8.0.0/normalize.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <script src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>
+    <script src="date.js"></script>
+    <script src="daumAddress.js"></script>
+    <style>
+        /*datepicker에서 사용한 이미지 버튼 style적용*/
+        img.ui-datepicker-trigger {
+            margin-left: 5px;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+
+        .form-inline {
+            margin-left: 100px;
+            margin-top: 15px;
+            margin-bottom: 100px;
+        }
+
+        .form-group {
+            margin-right: 100px;
+        }
+    </style>
+
+    <title>신청 step1</title>
+</head>
+<body>
+
+<form action="">
+
+    <div class="form-group addr_1">
+        <h4>임대물건지 주소</h4>
+        <div class="form-inline" id="lenter">
+            <input type="text" id="" class="post-code" placeholder="우편번호">
+            <input type="button" onclick="execDaumPostcode(lenter)" value="우편번호 찾기"><br>
+            <input type="text" id="" class="address" placeholder="주소">
+            <input type="text" id="" class="address-detail" placeholder="상세주소">
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <h4> 계약기간 </h4>
+        <div class="form-inline">
+            <div class="form-group">
+                <label for="fromDate">시작일</label>
+                <input type="text" class="form-control" name="fromDate" id="fromDate">
+            </div>
+            <div class="form-group">
+                <label for="toDate">종료일</label>
+                <input type="text" class="form-control" name="toDate" id="toDate">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <h4>계약면적</h4>
+        <div class="form-inline">
+            <input type="text" id="" class="form-control"> m<sup>2</sup>
+            <small>&nbsp;&nbsp;&nbsp; 60m<sup>2</sup>이하만 가능합니다.</small>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <h4>주택유형</h4>
+        <div class="form-inline">
+            <input type="text" class="form-control">
+            <br>
+            <small>예) 다가구, 다세대, 아파트, 오피스텔 등</small>
+            <br>
+            <small>*건축물대상을 참고해주세요</small>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <h4> 계약금액 </h4>
+        <div class="form-inline">
+            <div class="form-group">
+                <label for="deposit"> 보증금 </label><br>
+                <input type="text" class="form-control" id="deposit"> 만원
+                <br>
+                <small> *최대 1억원까지 가능합니다.</small>
+            </div>
+            <div class="form-group">
+                <label for="monthly_rent"> 월세 </label><br>
+                <input type="text" class="form-control" id="monthly_rent"> 만원
+                <br>
+                <small> *최대 70만원까지 가능합니다.</small>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <h4>융자신청금액</h4>
+        <div class="form-inline">
+            <input type="text" class="form-control"> 만원
+            <br>
+            <small>*계약금액 보증금의 88%가 최대금액 입니다.</small>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <h4>신청유형</h4>
+        <div class="form-inline">
+            <label><input type="radio" name="apply_type" value="student"> 대학(원)생 </label>
+            <label><input type="radio" name="apply_type" value="pre_worker"> 취업준비생 </label>
+            <label><input type="radio" name="apply_type" value="employee"> 사회초년생 </label>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $("input[name='apply_type']").click(function () {
+            var thisVal = $(this).val();
+
+            $(".year-income").css("display", "none");
+            $(".document_list").css("display", "block");
+            switch (thisVal) {
+                case "student":
+                    $("#id_stu_pre").css("display", "block");
+                    $("#add_document").html("재학증명서");
+                    break;
+                case "pre_worker":
+                    $("#id_stu_pre").css("display", "block");
+                    $("#add_document").html("졸업증명서");
+                    break;
+                case "employee":
+                    $("#id_emp").css("display", "block");
+                    $("#add_document").html("재직증명서");
+                    break;
+                default:
+            }
+        });
+
+
+    </script>
+    <!-- none / blck div 내용-->
+
+    <div class="form-group year-income" id="id_stu_pre" style="display:none">
+        <h4> 연소득금액 </h4>
+        <div class="form-inline">
+            <div class="form-group">
+                <input type="text" class="form-control"> 만원
+            </div>
+            <div class="form-group">
+                <label> <input type="radio" name="income_type" value="my_income"> 본인소득 </label> &nbsp;&nbsp;
+                <label> <input type="radio" name="income_type" value="parents_income"> 부모님소득</label>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group year-income" id="id_emp" style="display:none">
+        <h4>연소득금액</h4>
+        <div class="form-inline">
+            <div class="form-group">
+                <input type="text" class="form-control"> 만원
+            </div>
+            <div class="form-group">
+                <label> <input type="radio" name="income_type" value="my_income"> 본인소득 </label>&nbsp;&nbsp;
+                <label> <input type="radio" name="income_type" value="parents_income"> 부부소득</label>
+                <br>
+                <small>*건강보험자격득실확인서의 직장가입자 기준</small>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <h4></h4>
+        <div class="form-inline">
+            <div class="form-group">
+                최초입사일<br>
+                <label for="startWork"></label>
+                <input type="text" class="form-control" name="startWork" id="startWork">
+            </div>
+            <div class="form-group">
+                <br>
+                <label for="nowDate"></label>
+                <input type="text" class="form-control" name="nowDate" id="nowDate">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <h4></h4>
+        <div class="form-inline">
+            <div class="form-group">
+                <label for="applicant_name"> 이름 </label><br>
+                <input type="text" class="form-control" id="applicant_name">
+            </div>
+            <div class="form-group">
+                <label for="birthDate"> 생년월일 </label><br>
+                <input type="text" name="birthDate" id="birthDate" class="form-control">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group addr_2">
+        <h4>주민등록상 주소지</h4>
+        <div class="form-inline">
+            <input type="text" id="" placeholder="우편번호">
+            <input type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
+            <input type="text" id="" placeholder="주소">
+            <input type="text" id="" placeholder="상세주소">
+        </div>
+    </div>
+
+
+    <div class="form-group addr_3">
+        <h4>우편물 받을 주소 </h4>
+        <div class="form-inline">
+            <input type="text" id="" placeholder="우편번호">
+            <input type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
+            <input type="text" id="" placeholder="주소">
+            <input type="text" id="" placeholder="상세주소">
+            <input type="checkbox" name="addr_chk" value="addr_chk">
+            <br>
+            <small>선정결과가 우편물로 보내집니다.</small>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <h4>이메일주소</h4>
+        <div class="form-inline">
+            <input type="email" class="form-control">
+        </div>
+    </div>
+
+
+    <!--제출서류 -->
+    <div class="form-group document_list" style="display:none">
+        <!-- <div class="form-group document" id="id_document" style="display:none"> -->
+        <h4>제출서류</h4>
+        <div class="form-inline">
+            <ol type="1" start="1">
+                <li>주민등록등분</li>
+                <li>가족관계증명서</li>
+                <li>소득서류(원천징수 영수증, 갑종근로소득, 소득금액증명원) 중 하나</li>
+                <li>계약서</li>
+                <li><span id="add_document" class="add_document"> </span></li>
+            </ol>
+        </div>
+    </div>
+
+    <div>
+        <button type="submit" class="btn btn-default btn-lg btn-block"> 이사견적 신청</button>
+    </div>
+
+</form>
+
+</body>
+</html>
